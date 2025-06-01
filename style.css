@@ -67,6 +67,13 @@ body {
     text-align: center;
   }
   
+  .hero-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+    border-radius: 10px;
+  }
+  
   footer {
     background-color: #000;
     color: #fff;
