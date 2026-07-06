@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Zelous for Jesus | Hidden Admin</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="admin-page">
+  <header class="admin-top">
+    <div class="container admin-actions">
+      <a class="brand" href="index.html"><span class="brand-mark">ZJ</span><span>Zelous for Jesus Admin</span></a>
+      <a class="btn secondary" href="index.html">View website</a>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="admin-note">
+        <strong>Hidden admin page:</strong> this page is not linked in the public menu and has no login as requested. For a live public website, protect this page properly and connect prayer requests to a real backend, SharePoint list, Google Sheet, Airtable, or database.
+      </div>
+      <div class="admin-layout">
+        <aside class="admin-sidebar">
+          <button class="admin-tab active" data-tab="tab-live">Live control</button>
+          <button class="admin-tab" data-tab="tab-events">Events</button>
+          <button class="admin-tab" data-tab="tab-prayers">Prayer requests</button>
+          <button class="admin-tab" data-tab="tab-sermon">Latest sermon</button>
+          <button class="admin-tab" data-tab="tab-resources">Bible resources</button>
+          <button class="admin-tab" data-tab="tab-site">Site settings</button>
+        </aside>
+
+        <div>
+          <section id="tab-live" class="admin-section active">
+            <div class="form-card">
+              <h2>Live control</h2>
+              <p class="help">Turn this on to show the red live button on every page.</p>
+              <form id="live-form">
+                <div class="switch-row">
+                  <div><strong>Show live indicator</strong><br><span class="help">Visible on every page when switched on.</span></div>
+                  <label class="switch"><input id="live-toggle" type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="field" style="margin-top:18px"><label for="live-label">Live label</label><input id="live-label" placeholder="Live Service Now"></div>
+                <div class="field"><label for="live-url">Live link</label><input id="live-url" placeholder="https://youtube.com/..."></div>
+                <button class="btn" type="submit">Save live settings</button>
+              </form>
+            </div>
+          </section>
+
+          <section id="tab-events" class="admin-section">
+            <div class="form-card" style="margin-bottom:22px">
+              <h2>Add event</h2>
+              <form id="event-form" class="grid two-col">
+                <div class="field"><label for="event-title">Event title</label><input id="event-title" required></div>
+                <div class="field"><label for="event-location">Location</label><input id="event-location"></div>
+                <div class="field"><label for="event-date">Date</label><input id="event-date" type="date" required></div>
+                <div class="field"><label for="event-time">Time</label><input id="event-time" type="time"></div>
+                <div class="field" style="grid-column:1/-1"><label for="event-description">Description</label><textarea id="event-description"></textarea></div>
+                <label><input id="event-highlight" type="checkbox"> Highlight as next/upcoming event on home page</label>
+                <div><button class="btn" type="submit">Add event</button></div>
+              </form>
+            </div>
+            <div class="table-wrap"><table class="table" id="events-table"><thead><tr><th>Event</th><th>Date / time</th><th>Location</th><th>Highlight</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+          </section>
+
+          <section id="tab-prayers" class="admin-section">
+            <div class="form-card" style="margin-bottom:22px">
+              <h2>Prayer requests</h2>
+              <p class="help">Filter, sort, mark answered and export to CSV/Excel.</p>
+              <div class="filter-row">
+                <div class="field"><label for="prayer-search">Search</label><input id="prayer-search" placeholder="Search name or request"></div>
+                <div class="field"><label for="prayer-filter">Answered filter</label><select id="prayer-filter"><option value="all">All</option><option value="unanswered">Not answered</option><option value="answered">Answered</option></select></div>
+                <div class="field"><label for="prayer-sort">Sort by date</label><select id="prayer-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></div>
+                <button id="export-prayers" class="btn" type="button">Export CSV</button>
+              </div>
+            </div>
+            <div class="table-wrap"><table class="table" id="prayers-table"><thead><tr><th>Name / contact</th><th>Prayer request</th><th>Date and time</th><th>Prayer answered</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+          </section>
+
+          <section id="tab-sermon" class="admin-section">
+            <div class="form-card">
+              <h2>Latest sermon</h2>
+              <form id="sermon-form">
+                <div class="field"><label for="sermon-title">Sermon title</label><input id="sermon-title" required></div>
+                <div class="field"><label for="sermon-speaker">Speaker</label><input id="sermon-speaker"></div>
+                <div class="field"><label for="sermon-date">Date</label><input id="sermon-date" type="date"></div>
+                <div class="field"><label for="sermon-url">YouTube link</label><input id="sermon-url" placeholder="https://www.youtube.com/watch?v=..."></div>
+                <div class="field"><label for="sermon-description">Description</label><textarea id="sermon-description"></textarea></div>
+                <button class="btn" type="submit">Save latest sermon</button>
+              </form>
+            </div>
+          </section>
+
+          <section id="tab-resources" class="admin-section">
+            <div class="form-card" style="margin-bottom:22px">
+              <h2>Add Bible resource</h2>
+              <form id="resource-form" class="grid two-col">
+                <div class="field"><label for="resource-title">Title</label><input id="resource-title" required></div>
+                <div class="field"><label for="resource-url">External link</label><input id="resource-url" required></div>
+                <div class="field" style="grid-column:1/-1"><label for="resource-description">Description</label><input id="resource-description"></div>
+                <div><button class="btn" type="submit">Add resource</button></div>
+              </form>
+            </div>
+            <div class="table-wrap"><table class="table" id="resources-table"><thead><tr><th>Resource</th><th>URL</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+          </section>
+
+          <section id="tab-site" class="admin-section">
+            <div class="form-card">
+              <h2>Site settings</h2>
+              <form id="site-form">
+                <div class="field"><label for="site-name">Church name</label><input id="site-name"></div>
+                <div class="field"><label for="site-tagline">Tagline</label><textarea id="site-tagline"></textarea></div>
+                <div class="field"><label for="twitter-url">Twitter / X link</label><input id="twitter-url"></div>
+                <div class="field"><label for="facebook-url">Facebook link</label><input id="facebook-url"></div>
+                <div class="field"><label for="youtube-url">YouTube link</label><input id="youtube-url"></div>
+                <button class="btn" type="submit">Save site settings</button>
+                <button id="reset-site" class="btn danger" type="button" style="margin-left:8px">Reset sample data</button>
+              </form>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div id="admin-toast" class="admin-toast"></div>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>
