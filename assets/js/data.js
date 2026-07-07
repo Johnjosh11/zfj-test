@@ -108,7 +108,7 @@ const ZFJ_DEFAULTS = {
     title: 'Walking by Faith',
     speaker: 'Pastor Emmanuel',
     date: '2026-07-05',
-    youtubeUrl: 'https://www.youtube.com/watch?v=ysz5S6PUM-U',
+    youtubeUrl: 'https://www.youtube.com/watch?v=F_cJbHLghLQ&t=4244s',
     description: 'God’s Word gives us courage and direction. Watch the latest message and be encouraged.'
   },
   sermons: [
