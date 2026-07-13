@@ -5,9 +5,9 @@ const ZFJ_DEFAULTS = {
   siteName: 'Zelous for Jesus',
   tagline: 'A youth-friendly church family passionate about Jesus, prayer and mission.',
   social: {
-    twitter: 'https://twitter.com/',
-    facebook: 'https://facebook.com/',
-    youtube: 'https://youtube.com/'
+    instagram: 'https://instagram.com/',
+    youtube: 'https://youtube.com/',
+    facebook: 'https://facebook.com/'
   },
   live: {
     isLive: false,
@@ -45,6 +45,7 @@ const ZFJ_DEFAULTS = {
       time: '10:30',
       location: 'Main Church Hall',
       description: 'Join us for worship, Word and fellowship.',
+      image: 'assets/images/hero-worship.svg',
       highlight: true
     },
     {
@@ -132,12 +133,21 @@ const ZFJ_DEFAULTS = {
     { title: 'Bible in One Year', description: 'Daily reading plan.', url: 'https://bibleinoneyear.org/' }
   ],
   gallery: [
-    { title: 'Worship Night', image: 'assets/images/gallery-1.svg' },
-    { title: 'Youth Camp', image: 'assets/images/gallery-2.svg' },
-    { title: 'Outreach Day', image: 'assets/images/gallery-3.svg' },
-    { title: 'Prayer Gathering', image: 'assets/images/hero-prayer.svg' },
-    { title: 'Community Sunday', image: 'assets/images/hero-community.svg' },
-    { title: 'Mission Sunday', image: 'assets/images/mission.svg' }
+    { title: 'Worship Night', image: 'https://picsum.photos/seed/zfj1/640/440' },
+    { title: 'Youth Camp', image: 'https://picsum.photos/seed/zfj2/640/440' },
+    { title: 'Outreach Day', image: 'https://picsum.photos/seed/zfj3/640/440' },
+    { title: 'Prayer Gathering', image: 'https://picsum.photos/seed/zfj4/640/440' },
+    { title: 'Community Sunday', image: 'https://picsum.photos/seed/zfj5/640/440' },
+    { title: 'Mission Sunday', image: 'https://picsum.photos/seed/zfj6/640/440' },
+    { title: 'Baptism Service', image: 'https://picsum.photos/seed/zfj7/640/440' },
+    { title: 'Children Ministry', image: 'https://picsum.photos/seed/zfj8/640/440' },
+    { title: 'Fellowship Meal', image: 'https://picsum.photos/seed/zfj9/640/440' },
+    { title: 'Christmas Carols', image: 'https://picsum.photos/seed/zfj10/640/440' },
+    { title: 'Easter Sunday', image: 'https://picsum.photos/seed/zfj11/640/440' },
+    { title: 'Worship Team', image: 'https://picsum.photos/seed/zfj12/640/440' },
+    { title: 'Bible Study', image: 'https://picsum.photos/seed/zfj13/640/440' },
+    { title: 'Community Outreach', image: 'https://picsum.photos/seed/zfj14/640/440' },
+    { title: 'Youth Retreat', image: 'https://picsum.photos/seed/zfj15/640/440' }
   ]
 };
 

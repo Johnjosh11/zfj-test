@@ -4,8 +4,18 @@
 <body>
   <div id="site-header"></div><div id="floating-social"></div><div id="live-banner"></div>
   <main>
-    <section class="page-hero"><div class="container"><h1>Gallery</h1><p>Replace these sample images with photos from your church services, ministries, outreach and events.</p></div></section>
-    <section class="section"><div class="container"><div id="gallery-grid" class="gallery-grid"></div></div></section>
+    <section class="page-hero"><div class="container"><h1>Gallery</h1><p>Upload photos from your church services, ministries, outreach and events. Photos are saved in this browser.</p></div></section>
+    <section class="section"><div class="container">
+      <div class="gallery-uploader">
+        <label class="gallery-drop" for="gallery-file">
+          <span class="gallery-drop-icon">↑</span>
+          <strong>Click to upload photos</strong>
+          <span class="help">JPG, PNG or GIF — you can select several at once</span>
+          <input id="gallery-file" type="file" accept="image/*" multiple hidden>
+        </label>
+      </div>
+      <div id="gallery-grid" class="gallery-grid"></div>
+    </div></section>
   </main>
   <div id="site-footer"></div><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script>
 </body>

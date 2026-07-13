@@ -1,4 +1,5 @@
 let adminData = getSiteData();
+let editingEventId = null;
 
 function $(selector) { return document.querySelector(selector); }
 function $all(selector) { return [...document.querySelectorAll(selector)]; }
@@ -52,14 +53,14 @@ function renderLiveSettings() {
 function renderSocialSettings() {
   $('#site-name').value = adminData.siteName || '';
   $('#site-tagline').value = adminData.tagline || '';
-  $('#twitter-url').value = adminData.social.twitter || '';
+  $('#instagram-url').value = adminData.social.instagram || '';
   $('#facebook-url').value = adminData.social.facebook || '';
   $('#youtube-url').value = adminData.social.youtube || '';
   $('#site-form').onsubmit = (event) => {
     event.preventDefault();
     adminData.siteName = $('#site-name').value.trim() || 'Zelous for Jesus';
     adminData.tagline = $('#site-tagline').value.trim();
-    adminData.social.twitter = $('#twitter-url').value.trim() || '#';
+    adminData.social.instagram = $('#instagram-url').value.trim() || '#';
     adminData.social.facebook = $('#facebook-url').value.trim() || '#';
     adminData.social.youtube = $('#youtube-url').value.trim() || '#';
     saveAndRefresh('Site settings saved');
@@ -75,32 +76,143 @@ function renderEventsAdmin() {
       <td>${adminEscape(event.date)}<br><span class="help">${adminEscape(event.time)}</span></td>
       <td>${adminEscape(event.location)}</td>
       <td>${event.highlight ? '<span class="badge warning">Yes</span>' : '<span class="badge">No</span>'}</td>
-      <td><button class="btn danger small" data-delete-event="${adminEscape(event.id)}">Delete</button></td>
+      <td><button class="btn soft small" data-edit-event="${adminEscape(event.id)}">Edit</button> <button class="btn danger small" data-delete-event="${adminEscape(event.id)}">Delete</button></td>
     </tr>`).join('');
+
+  $all('[data-edit-event]').forEach(button => {
+    button.onclick = () => startEventEdit(button.dataset.editEvent);
+  });
 
   $all('[data-delete-event]').forEach(button => {
     button.onclick = () => {
       adminData.events = adminData.events.filter(e => e.id !== button.dataset.deleteEvent);
+      if (editingEventId === button.dataset.deleteEvent) resetEventForm();
       saveAndRefresh('Event deleted');
     };
   });
 
+  $('#event-cancel').onclick = () => resetEventForm();
+
+  const imageFileInput = $('#event-image-file');
+  if (imageFileInput) {
+    imageFileInput.onchange = () => {
+      const file = imageFileInput.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        $('#event-image').value = reader.result;
+        renderEventPosterPreview();
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+  $('#event-image').oninput = renderEventPosterPreview;
+
   $('#event-form').onsubmit = (event) => {
     event.preventDefault();
-    const item = {
-      id: `event-${Date.now()}`,
-      title: $('#event-title').value.trim(),
-      date: $('#event-date').value,
+    const title = $('#event-title').value.trim();
+    const date = $('#event-date').value;
+    if (!title || !date) return;
+    const highlight = $('#event-highlight').checked;
+    if (highlight) adminData.events = adminData.events.map(e => ({ ...e, highlight: false }));
+    const values = {
+      title,
+      date,
       time: $('#event-time').value,
       location: $('#event-location').value.trim(),
       description: $('#event-description').value.trim(),
-      highlight: $('#event-highlight').checked
+      image: $('#event-image').value.trim(),
+      highlight
     };
-    if (!item.title || !item.date) return;
-    if (item.highlight) adminData.events = adminData.events.map(e => ({ ...e, highlight: false }));
-    adminData.events.push(item);
-    $('#event-form').reset();
-    saveAndRefresh('Event added');
+    if (editingEventId) {
+      adminData.events = adminData.events.map(e => e.id === editingEventId ? { ...e, ...values } : e);
+      resetEventForm();
+      saveAndRefresh('Event updated');
+    } else {
+      adminData.events.push({ id: `event-${Date.now()}`, ...values });
+      resetEventForm();
+      saveAndRefresh('Event added');
+    }
+  };
+}
+
+function renderEventPosterPreview() {
+  const preview = $('#event-image-preview');
+  if (!preview) return;
+  const url = $('#event-image').value.trim();
+  preview.innerHTML = url ? `<img src="${adminEscape(url)}" alt="Poster preview">` : '';
+}
+
+function startEventEdit(id) {
+  const event = adminData.events.find(e => e.id === id);
+  if (!event) return;
+  editingEventId = id;
+  $('#event-title').value = event.title || '';
+  $('#event-location').value = event.location || '';
+  $('#event-date').value = event.date || '';
+  $('#event-time').value = event.time || '';
+  $('#event-image').value = event.image || '';
+  $('#event-description').value = event.description || '';
+  $('#event-highlight').checked = !!event.highlight;
+  $('#event-form-title').textContent = 'Edit event';
+  $('#event-submit').textContent = 'Update event';
+  $('#event-cancel').style.display = '';
+  renderEventPosterPreview();
+  $('#event-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetEventForm() {
+  editingEventId = null;
+  $('#event-form').reset();
+  $('#event-form-title').textContent = 'Add event';
+  $('#event-submit').textContent = 'Add event';
+  $('#event-cancel').style.display = 'none';
+  renderEventPosterPreview();
+}
+
+function renderGalleryAdmin() {
+  const tbody = $('#gallery-table tbody');
+  if (!tbody) return;
+  tbody.innerHTML = adminData.gallery.map((item, index) => `
+    <tr>
+      <td><img class="admin-thumb" src="${adminEscape(item.image)}" alt="${adminEscape(item.title)}"></td>
+      <td>${adminEscape(item.title)}</td>
+      <td><span class="help">${String(item.image || '').startsWith('data:') ? 'Uploaded photo' : adminEscape(item.image)}</span></td>
+      <td><button class="btn danger small" data-delete-photo="${index}">Delete</button></td>
+    </tr>`).join('') || '<tr><td colspan="4">No photos yet.</td></tr>';
+
+  $all('[data-delete-photo]').forEach(button => {
+    button.onclick = () => {
+      adminData.gallery.splice(Number(button.dataset.deletePhoto), 1);
+      saveAndRefresh('Photo deleted');
+    };
+  });
+
+  $('#gallery-upload').onchange = (event) => {
+    const imageFiles = [...event.target.files].filter(file => file.type.startsWith('image/'));
+    if (!imageFiles.length) return;
+    let pending = imageFiles.length;
+    imageFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        adminData.gallery.push({ title: file.name.replace(/\.[^.]+$/, ''), image: reader.result });
+        pending -= 1;
+        if (pending === 0) {
+          try { saveAndRefresh('Photos uploaded'); }
+          catch (error) { toast('Photos too large to store'); }
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  $('#gallery-form').onsubmit = (event) => {
+    event.preventDefault();
+    const url = $('#gallery-url').value.trim();
+    if (!url) return;
+    adminData.gallery.push({ title: $('#gallery-title').value.trim() || 'Gallery photo', image: url });
+    $('#gallery-form').reset();
+    saveAndRefresh('Photo added');
   };
 }
 
@@ -235,6 +347,7 @@ function renderAdmin() {
   renderSocialSettings();
   renderEventsAdmin();
   renderSermonAdmin();
+  renderGalleryAdmin();
   renderBibleAdmin();
   renderPrayersAdmin();
 }
