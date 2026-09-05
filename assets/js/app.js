@@ -65,8 +65,7 @@ function renderCommon() {
       <header class="site-header">
         <div class="container nav-wrap">
           <a class="brand" href="index.html" aria-label="${escapeHtml(data.siteName)} home">
-            <span class="brand-mark">ZJ</span>
-            <span>${escapeHtml(data.siteName)}</span>
+            <span class="brand-logo"><img src="assets/images/zfj-logo.png" alt="ZFJ — Zealous for Jesus"></span>
           </a>
           <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
           <nav class="nav-menu" aria-label="Main navigation">
@@ -104,7 +103,7 @@ function renderCommon() {
         <div class="container">
           <div class="footer-grid">
             <div>
-              <div class="brand" style="color:white"><span class="brand-mark">ZJ</span><span>${escapeHtml(data.siteName)}</span></div>
+              <div class="brand" style="color:white"><span class="brand-logo"><img src="assets/images/zfj-logo.png" alt="ZFJ — Zealous for Jesus"></span></div>
               <p>${escapeHtml(data.tagline)}</p>
               <p><strong>Service:</strong> Sunday 10:30 AM</p>
             </div>
