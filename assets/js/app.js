@@ -1,4 +1,4 @@
-const data = getSiteData();
+let data = getSiteData();
 const currentPage = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
 function formatDate(dateString, options = { day: '2-digit', month: 'short', year: 'numeric' }) {
@@ -515,6 +515,7 @@ function renderSermonsPage() {
 function renderHomeGallery() {
   const el = document.getElementById('home-gallery');
   if (!el) return;
+  if (window.__zfjGalleryTimer) { clearInterval(window.__zfjGalleryTimer); window.__zfjGalleryTimer = null; }
   const items = getSiteData().gallery || [];
   if (!items.length) { el.innerHTML = ''; return; }
   el.innerHTML = `
@@ -561,8 +562,8 @@ function renderHomeGallery() {
   next.addEventListener('click', () => { scrollByStep(1); restart(); });
 
   let timer = null;
-  function start() { timer = setInterval(() => scrollByStep(1), 5000); }
-  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function start() { timer = setInterval(() => scrollByStep(1), 5000); window.__zfjGalleryTimer = timer; }
+  function stop() { if (timer) { clearInterval(timer); timer = null; window.__zfjGalleryTimer = null; } }
   function restart() { stop(); start(); }
   const carousel = el.querySelector('.gallery-carousel');
   carousel.addEventListener('mouseenter', stop);
@@ -643,18 +644,26 @@ function renderMinistryDetail() {
     </div>`;
 }
 
-renderCommon();
-renderHero();
-renderUpcomingEvent();
-renderMonthEvents();
-renderPrayerCta();
-renderMission();
-renderMinistries(currentPage === 'index.html' ? 4 : null);
-renderLatestSermon();
-renderBibleResources(currentPage === 'index.html' ? 4 : null);
-renderHomeGallery();
-renderEventsPage();
-renderPrayerForm();
-renderSermonsPage();
-renderGalleryPage();
-renderMinistryDetail();
+function renderAll() {
+  data = getSiteData();
+  renderCommon();
+  renderHero();
+  renderUpcomingEvent();
+  renderMonthEvents();
+  renderPrayerCta();
+  renderMission();
+  renderMinistries(currentPage === 'index.html' ? 4 : null);
+  renderLatestSermon();
+  renderBibleResources(currentPage === 'index.html' ? 4 : null);
+  renderHomeGallery();
+  renderEventsPage();
+  renderPrayerForm();
+  renderSermonsPage();
+  renderGalleryPage();
+  renderMinistryDetail();
+}
+
+// Render immediately with local data, then pull the published content and
+// re-render so committed edits show for every visitor on every device.
+renderAll();
+loadPublishedData().then((published) => { if (published) renderAll(); });

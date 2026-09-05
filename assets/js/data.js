@@ -1,5 +1,7 @@
 const ZFJ_STORAGE_KEY = 'zfjSiteData';
 const ZFJ_PRAYER_KEY = 'zfjPrayerRequests';
+const ZFJ_PUBLISHED_URL = 'assets/data/site-data.json';
+let ZFJ_PUBLISHED_DATA = null;
 
 const ZFJ_DEFAULTS = {
   siteName: 'Zelous for Jesus',
@@ -71,7 +73,7 @@ const ZFJ_DEFAULTS = {
     title: 'Our Mission',
     heading: 'Take part in our mission',
     text: 'Our mission is to reach people with the love of Jesus, bring hope to those in need, support families, raise young leaders and serve our community with compassion.',
-    image: 'assets/images/mission.svg',
+    image: 'https://picsum.photos/seed/zfjmission/900/700',
     ctaText: 'Join Us',
     ctaUrl: 'contact.html'
   },
@@ -79,28 +81,28 @@ const ZFJ_DEFAULTS = {
     {
       id: 'children',
       title: "Children's Church",
-      image: 'assets/images/ministry-children.svg',
+      image: 'https://picsum.photos/seed/zfjchildren/640/440',
       intro: 'A safe, joyful space for children to learn about Jesus through Bible stories, songs, games and activities.',
       page: 'ministry-children.html'
     },
     {
       id: 'youth',
       title: 'Youth Ministry',
-      image: 'assets/images/ministry-youth.svg',
+      image: 'https://picsum.photos/seed/zfjyouth/640/440',
       intro: 'Helping young people follow Jesus, build friendships and use their gifts with confidence.',
       page: 'ministry-youth.html'
     },
     {
       id: 'fellowship',
       title: 'Monthly Fellowship',
-      image: 'assets/images/ministry-fellowship.svg',
+      image: 'https://picsum.photos/seed/zfjfellowship/640/440',
       intro: 'A monthly gathering for worship, testimonies, prayer and growing deeper together as one family.',
       page: 'ministry-fellowship.html'
     },
     {
       id: 'outreach',
       title: 'Outreach',
-      image: 'assets/images/ministry-outreach.svg',
+      image: 'https://picsum.photos/seed/zfjoutreach/640/440',
       intro: 'Serving our local community and sharing the hope of Jesus through practical care and prayer.',
       page: 'ministry-outreach.html'
     }
@@ -168,11 +170,27 @@ function deepMerge(defaults, saved) {
 function getSiteData() {
   try {
     const saved = JSON.parse(localStorage.getItem(ZFJ_STORAGE_KEY) || '{}');
-    return deepMerge(ZFJ_DEFAULTS, saved);
+    const base = ZFJ_PUBLISHED_DATA ? deepMerge(ZFJ_DEFAULTS, ZFJ_PUBLISHED_DATA) : ZFJ_DEFAULTS;
+    return deepMerge(base, saved);
   } catch (error) {
     console.warn('Unable to read saved site data', error);
     return ZFJ_DEFAULTS;
   }
+}
+
+// Loads the committed site-data.json (published content) so that admin edits,
+// once exported and committed, are visible to every visitor on every device.
+async function loadPublishedData() {
+  try {
+    const response = await fetch(`${ZFJ_PUBLISHED_URL}?v=${Date.now()}`, { cache: 'no-store' });
+    if (response.ok) {
+      const json = await response.json();
+      if (json && typeof json === 'object') ZFJ_PUBLISHED_DATA = json;
+    }
+  } catch (error) {
+    /* No published file yet, or running from file:// — fall back to defaults. */
+  }
+  return ZFJ_PUBLISHED_DATA;
 }
 
 function saveSiteData(data) {

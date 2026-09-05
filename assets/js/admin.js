@@ -238,6 +238,92 @@ function renderSermonAdmin() {
   };
 }
 
+function renderMissionAdmin() {
+  if (!$('#mission-form')) return;
+  $('#mission-heading').value = adminData.mission.heading || '';
+  $('#mission-text').value = adminData.mission.text || '';
+  $('#mission-image').value = adminData.mission.image || '';
+  renderMissionPreview();
+  $('#mission-image').oninput = renderMissionPreview;
+  $('#mission-image-file').onchange = () => {
+    const file = $('#mission-image-file').files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => { $('#mission-image').value = reader.result; renderMissionPreview(); };
+    reader.readAsDataURL(file);
+  };
+  $('#mission-form').onsubmit = (event) => {
+    event.preventDefault();
+    adminData.mission.heading = $('#mission-heading').value.trim() || adminData.mission.heading;
+    adminData.mission.text = $('#mission-text').value.trim();
+    adminData.mission.image = $('#mission-image').value.trim();
+    saveAndRefresh('Mission saved');
+  };
+}
+
+function renderMissionPreview() {
+  const preview = $('#mission-image-preview');
+  if (!preview) return;
+  const url = $('#mission-image').value.trim();
+  preview.innerHTML = url ? `<img src="${adminEscape(url)}" alt="Mission preview">` : '';
+}
+
+function renderMinistriesAdmin() {
+  const wrap = $('#ministries-admin');
+  if (!wrap) return;
+  wrap.innerHTML = adminData.ministries.map(m => `
+    <div class="ministry-edit">
+      <div class="ministry-edit-head">
+        <div class="admin-poster-preview" data-min-preview="${adminEscape(m.id)}"><img src="${adminEscape(m.image)}" alt=""></div>
+        <h3>${adminEscape(m.title)}</h3>
+      </div>
+      <div class="field"><label>Title</label><input data-min-title="${adminEscape(m.id)}"></div>
+      <div class="field"><label>Short intro</label><textarea data-min-intro="${adminEscape(m.id)}"></textarea></div>
+      <div class="field"><label>Image link (URL)</label><input data-min-image="${adminEscape(m.id)}" placeholder="https://... or upload below"></div>
+      <div class="field"><label>Or upload image</label><input type="file" accept="image/*" data-min-file="${adminEscape(m.id)}"></div>
+      <button class="btn" data-min-save="${adminEscape(m.id)}">Save ${adminEscape(m.title)}</button>
+    </div>`).join('');
+
+  adminData.ministries.forEach(m => {
+    wrap.querySelector(`[data-min-title="${m.id}"]`).value = m.title || '';
+    wrap.querySelector(`[data-min-intro="${m.id}"]`).value = m.intro || '';
+    wrap.querySelector(`[data-min-image="${m.id}"]`).value = m.image || '';
+  });
+
+  wrap.querySelectorAll('[data-min-file]').forEach(input => {
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      const id = input.dataset.minFile;
+      const reader = new FileReader();
+      reader.onload = () => {
+        wrap.querySelector(`[data-min-image="${id}"]`).value = reader.result;
+        const preview = wrap.querySelector(`[data-min-preview="${id}"] img`);
+        if (preview) preview.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    };
+  });
+
+  wrap.querySelectorAll('[data-min-image]').forEach(input => {
+    input.oninput = () => {
+      const preview = wrap.querySelector(`[data-min-preview="${input.dataset.minImage}"] img`);
+      if (preview) preview.src = input.value;
+    };
+  });
+
+  wrap.querySelectorAll('[data-min-save]').forEach(button => {
+    button.onclick = () => {
+      const id = button.dataset.minSave;
+      const title = wrap.querySelector(`[data-min-title="${id}"]`).value.trim();
+      const intro = wrap.querySelector(`[data-min-intro="${id}"]`).value.trim();
+      const image = wrap.querySelector(`[data-min-image="${id}"]`).value.trim();
+      adminData.ministries = adminData.ministries.map(m => m.id === id ? { ...m, title: title || m.title, intro, image } : m);
+      saveAndRefresh('Ministry updated');
+    };
+  });
+}
+
 function renderBibleAdmin() {
   const tbody = $('#resources-table tbody');
   tbody.innerHTML = adminData.bibleResources.map((item, index) => `
@@ -341,12 +427,56 @@ function setupReset() {
   };
 }
 
+function setupPublishTools() {
+  const exportBtn = $('#export-data');
+  if (exportBtn) {
+    exportBtn.onclick = () => {
+      const json = JSON.stringify(getSiteData(), null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'site-data.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      toast('Downloaded site-data.json');
+    };
+  }
+
+  const importInput = $('#import-data');
+  if (importInput) {
+    importInput.onchange = (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (!parsed || typeof parsed !== 'object') throw new Error('Invalid file');
+          saveSiteData(parsed);
+          adminData = getSiteData();
+          renderAdmin();
+          toast('Imported site-data.json');
+        } catch (error) {
+          alert('That file could not be read as valid site data.');
+        }
+        importInput.value = '';
+      };
+      reader.readAsText(file);
+    };
+  }
+}
+
 function renderAdmin() {
   adminData = getSiteData();
   renderLiveSettings();
   renderSocialSettings();
   renderEventsAdmin();
   renderSermonAdmin();
+  renderMissionAdmin();
+  renderMinistriesAdmin();
   renderGalleryAdmin();
   renderBibleAdmin();
   renderPrayersAdmin();
@@ -355,4 +485,6 @@ function renderAdmin() {
 setupTabs();
 setupPrayerTools();
 setupReset();
+setupPublishTools();
 renderAdmin();
+loadPublishedData().then((published) => { if (published) { adminData = getSiteData(); renderAdmin(); } });
