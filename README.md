@@ -7,7 +7,7 @@ A mobile-friendly static church website built with HTML, CSS and JavaScript.
 - `index.html` - Home page with auto-scrolling hero images, upcoming event, prayer request section, mission section, ministries, latest sermon and Bible resources
 - `about.html` - About us page
 - `contact.html` - Contact page
-- `gallery.html` - Gallery page
+- `gallery.html` - View-only public gallery
 - `sermons.html` - Sermons page
 - `events.html` - Events page with month filter
 - `bible-resources.html` - Bible resource links that open in a separate tab
@@ -35,10 +35,22 @@ From there you can:
 - Update latest sermon YouTube link
 - Update Bible resource links
 - Update social media links
+- Add, upload and delete gallery photos from the hidden admin page
 
 ## Important note about prayer requests
 
 This is a static front-end version. The prayer form saves requests in browser `localStorage`, so requests are visible on `admin.html` on the same browser/device only.
+
+Events, gallery updates and other admin edits are also saved in browser `localStorage` until they are published. They will not automatically appear on another device.
+
+To publish an event or gallery change for everyone:
+
+1. Make the change in `admin.html`.
+2. Open **Site settings** and select **Download site-data.json**.
+3. Replace `assets/data/site-data.json` in the project with the downloaded file.
+4. Commit and push/redeploy the project. Visitors will then receive the published content on every device.
+
+For automatic multi-device editing, replace this static storage flow with a secured backend or CMS such as Supabase, Firebase, SharePoint, Airtable, or an API/database. The admin page currently has no authentication, so it should not be exposed publicly without protection.
 
 For a real public church website, connect the prayer request form to one of these:
 

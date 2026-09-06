@@ -573,52 +573,16 @@ function renderHomeGallery() {
 function renderGalleryPage() {
   const el = document.getElementById('gallery-grid');
   if (!el) return;
-  const input = document.getElementById('gallery-file');
 
   function paint() {
     const items = getSiteData().gallery || [];
     el.innerHTML = items.length
-      ? items.map((item, index) => `
+      ? items.map(item => `
         <figure class="gallery-item">
           <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}">
           <figcaption>${escapeHtml(item.title)}</figcaption>
-          <button class="gallery-remove" type="button" data-remove-photo="${index}" aria-label="Remove photo">&times;</button>
         </figure>`).join('')
-      : '<p>No photos yet. Use the upload box above to add your church photos.</p>';
-    el.querySelectorAll('[data-remove-photo]').forEach(button => {
-      button.addEventListener('click', () => {
-        const current = getSiteData();
-        current.gallery.splice(Number(button.dataset.removePhoto), 1);
-        saveSiteData(current);
-        paint();
-      });
-    });
-  }
-
-  if (input) {
-    input.addEventListener('change', () => {
-      const imageFiles = [...input.files].filter(file => file.type.startsWith('image/'));
-      if (!imageFiles.length) return;
-      let pending = imageFiles.length;
-      const current = getSiteData();
-      imageFiles.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          current.gallery.push({ title: file.name.replace(/\.[^.]+$/, ''), image: reader.result });
-          pending -= 1;
-          if (pending === 0) {
-            try {
-              saveSiteData(current);
-            } catch (error) {
-              alert('These photos are too large to store in the browser. Try smaller images or fewer at a time, or use the admin page to add online photo links instead.');
-            }
-            input.value = '';
-            paint();
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    });
+      : '<p>No photos have been published yet.</p>';
   }
 
   paint();
