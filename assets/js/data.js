@@ -76,8 +76,8 @@ const ZFJ_DEFAULTS = {
   ],
   mission: {
     title: 'Our Mission',
-    heading: 'Take part in our mission',
-    text: 'Our mission is to reach people with the love of Jesus, bring hope to those in need, support families, raise young leaders and serve our community with compassion.',
+    heading: 'Leading people into a living relationship with Jesus Christ',
+    text: 'We exist to lead youth, international students and families into a living relationship with Jesus Christ. Rooted in prayer, guided by the Word, and filled with the Spirit, we seek to raise a generation that knows His love, walks in His truth, and shares His hope with the world. John 3:16.',
     image: 'https://picsum.photos/seed/zfjmission/900/700',
     ctaText: 'Join Us',
     ctaUrl: 'contact.html'
