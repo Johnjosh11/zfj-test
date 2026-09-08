@@ -629,4 +629,6 @@ function renderAll() {
 // Render immediately with local data, then pull the published content and
 // re-render so committed edits show for every visitor on every device.
 renderAll();
-loadPublishedData().then((published) => { if (published) renderAll(); });
+loadPublishedData()
+  .then((published) => { if (published) renderAll(); })
+  .catch((error) => console.error('Unable to load live site content', error));

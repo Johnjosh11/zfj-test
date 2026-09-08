@@ -21,9 +21,14 @@ function toast(message) {
 }
 
 function saveAndRefresh(message = 'Saved') {
-  saveSiteData(adminData);
+  const save = saveSiteData(adminData);
   renderAdmin();
-  toast(message);
+  Promise.resolve(save)
+    .then(() => toast(message))
+    .catch((error) => {
+      console.error(error);
+      toast('Saved locally, but the live update failed');
+    });
 }
 
 function setupTabs() {
@@ -455,7 +460,7 @@ function setupPublishTools() {
         try {
           const parsed = JSON.parse(reader.result);
           if (!parsed || typeof parsed !== 'object') throw new Error('Invalid file');
-          saveSiteData(parsed);
+          saveSiteData(parsed).catch((error) => console.error(error));
           adminData = getSiteData();
           renderAdmin();
           toast('Imported site-data.json');
@@ -487,4 +492,6 @@ setupPrayerTools();
 setupReset();
 setupPublishTools();
 renderAdmin();
-loadPublishedData().then((published) => { if (published) { adminData = getSiteData(); renderAdmin(); } });
+loadPublishedData()
+  .then((published) => { if (published) { adminData = getSiteData(); renderAdmin(); } })
+  .catch((error) => console.error('Unable to load live site content', error));

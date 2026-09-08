@@ -50,7 +50,14 @@ To publish an event or gallery change for everyone:
 3. Replace `assets/data/site-data.json` in the project with the downloaded file.
 4. Commit and push/redeploy the project. Visitors will then receive the published content on every device.
 
-For automatic multi-device editing, replace this static storage flow with a secured backend or CMS such as Supabase, Firebase, SharePoint, Airtable, or an API/database. The admin page currently has no authentication, so it should not be exposed publicly without protection.
+For automatic multi-device editing without committing and redeploying, this project can use Supabase:
+
+1. Run the SQL in `supabase/schema.sql` in the Supabase SQL Editor.
+2. Copy the Supabase project URL and anon key from **Project Settings > API** into `assets/js/data.js` (`ZFJ_SUPABASE_URL` and `ZFJ_SUPABASE_ANON_KEY`).
+3. Deploy this one-time configuration change.
+4. Edit content in `admin.html`; saves are then written directly to Supabase and loaded by all visitors.
+
+The included update policy is suitable for initial testing only. Before production, add Supabase Auth to `admin.html` and replace the public update policy with an authenticated-admin policy. Never use a Supabase service-role key in browser code.
 
 For a real public church website, connect the prayer request form to one of these:
 

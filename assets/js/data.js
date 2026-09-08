@@ -1,6 +1,11 @@
 const ZFJ_STORAGE_KEY = 'zfjSiteData';
 const ZFJ_PRAYER_KEY = 'zfjPrayerRequests';
 const ZFJ_PUBLISHED_URL = 'assets/data/site-data.json';
+// Set these once from Supabase Project Settings > API. The anon key is
+// intended for browser use; never put a service-role key in this file.
+const ZFJ_SUPABASE_URL = 'https://lxbzectsiuxzdgacqrhg.supabase.co';
+const ZFJ_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4YnplY3RzaXV4emRnYWNxcmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4ODg5MjksImV4cCI6MjEwNDQ2NDkyOX0.nQxKIoyReFJlYgITzqsOyPz_5DaztNGK4H3hXYGwfpQ';
+const ZFJ_SUPABASE_ROW_ID = 'main';
 let ZFJ_PUBLISHED_DATA = null;
 
 const ZFJ_DEFAULTS = {
@@ -181,6 +186,25 @@ function getSiteData() {
 // Loads the committed site-data.json (published content) so that admin edits,
 // once exported and committed, are visible to every visitor on every device.
 async function loadPublishedData() {
+  if (ZFJ_SUPABASE_URL && ZFJ_SUPABASE_ANON_KEY) {
+    const response = await fetch(
+      `${ZFJ_SUPABASE_URL}/rest/v1/site_content?id=eq.${encodeURIComponent(ZFJ_SUPABASE_ROW_ID)}&select=data`,
+      {
+        headers: {
+          apikey: ZFJ_SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${ZFJ_SUPABASE_ANON_KEY}`
+        },
+        cache: 'no-store'
+      }
+    );
+    if (!response.ok) throw new Error(`Supabase content request failed (${response.status})`);
+    const rows = await response.json();
+    if (rows[0] && rows[0].data && typeof rows[0].data === 'object') {
+      ZFJ_PUBLISHED_DATA = rows[0].data;
+    }
+    return ZFJ_PUBLISHED_DATA;
+  }
+
   try {
     const response = await fetch(`${ZFJ_PUBLISHED_URL}?v=${Date.now()}`, { cache: 'no-store' });
     if (response.ok) {
@@ -195,6 +219,23 @@ async function loadPublishedData() {
 
 function saveSiteData(data) {
   localStorage.setItem(ZFJ_STORAGE_KEY, JSON.stringify(data));
+  if (!ZFJ_SUPABASE_URL || !ZFJ_SUPABASE_ANON_KEY) return Promise.resolve();
+
+  return fetch(
+    `${ZFJ_SUPABASE_URL}/rest/v1/site_content?id=eq.${encodeURIComponent(ZFJ_SUPABASE_ROW_ID)}`,
+    {
+      method: 'PATCH',
+      headers: {
+        apikey: ZFJ_SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${ZFJ_SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({ data })
+    }
+  ).then((response) => {
+    if (!response.ok) throw new Error(`Supabase content save failed (${response.status})`);
+  });
 }
 
 function getPrayerRequests() {
