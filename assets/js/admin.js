@@ -55,6 +55,119 @@ function renderLiveSettings() {
   };
 }
 
+function readHeroImage(file, onLoad) {
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    toast('Choose a valid image file');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    if (typeof reader.result !== 'string') {
+      toast('Unable to read this image');
+      return;
+    }
+    onLoad(reader.result);
+  };
+  reader.onerror = () => toast('Unable to read this image');
+  reader.readAsDataURL(file);
+}
+
+function renderHeroSlidesAdmin() {
+  const wrap = $('#hero-slides-admin');
+  if (!wrap) return;
+
+  wrap.innerHTML = adminData.heroSlides.map((slide, index) => `
+    <form class="ministry-edit" data-hero-form="${index}">
+      <h3>Slide ${index + 1}</h3>
+      <div class="admin-poster-preview" data-hero-preview="${index}">
+        ${slide.image ? `<img src="${adminEscape(slide.image)}" alt="Slide ${index + 1} preview">` : ''}
+      </div>
+      <div class="field"><label for="hero-title-${index}">Heading</label><input id="hero-title-${index}" data-hero-title="${index}" required></div>
+      <div class="field"><label for="hero-subtitle-${index}">Supporting text</label><textarea id="hero-subtitle-${index}" data-hero-subtitle="${index}"></textarea></div>
+      <div class="field"><label for="hero-image-${index}">Image link (URL)</label><input id="hero-image-${index}" data-hero-image="${index}" placeholder="https://... or upload below" required></div>
+      <div class="field"><label for="hero-image-file-${index}">Or upload an image</label><input id="hero-image-file-${index}" data-hero-file="${index}" type="file" accept="image/*"></div>
+      <div class="grid two-col">
+        <div class="field"><label for="hero-cta-text-${index}">Button text</label><input id="hero-cta-text-${index}" data-hero-cta-text="${index}"></div>
+        <div class="field"><label for="hero-cta-url-${index}">Button link</label><input id="hero-cta-url-${index}" data-hero-cta-url="${index}"></div>
+      </div>
+      <button class="btn" type="submit">Save slide</button>
+      <button class="btn danger" type="button" data-delete-hero="${index}">Delete slide</button>
+    </form>`).join('');
+
+  adminData.heroSlides.forEach((slide, index) => {
+    wrap.querySelector(`[data-hero-title="${index}"]`).value = slide.title || '';
+    wrap.querySelector(`[data-hero-subtitle="${index}"]`).value = slide.subtitle || '';
+    wrap.querySelector(`[data-hero-image="${index}"]`).value = slide.image || '';
+    wrap.querySelector(`[data-hero-cta-text="${index}"]`).value = slide.ctaText || '';
+    wrap.querySelector(`[data-hero-cta-url="${index}"]`).value = slide.ctaUrl || '';
+  });
+
+  wrap.querySelectorAll('[data-hero-image]').forEach(input => {
+    input.oninput = () => {
+      const preview = wrap.querySelector(`[data-hero-preview="${input.dataset.heroImage}"]`);
+      preview.innerHTML = input.value.trim() ? `<img src="${adminEscape(input.value.trim())}" alt="Slide preview">` : '';
+    };
+  });
+  wrap.querySelectorAll('[data-hero-file]').forEach(input => {
+    input.onchange = () => readHeroImage(input.files[0], (image) => {
+      const index = input.dataset.heroFile;
+      wrap.querySelector(`[data-hero-image="${index}"]`).value = image;
+      wrap.querySelector(`[data-hero-preview="${index}"]`).innerHTML = `<img src="${image}" alt="Slide preview">`;
+    });
+  });
+  wrap.querySelectorAll('[data-hero-form]').forEach(form => {
+    form.onsubmit = (event) => {
+      event.preventDefault();
+      const index = Number(form.dataset.heroForm);
+      const previous = adminData.heroSlides[index];
+      if (!previous) return;
+      adminData.heroSlides[index] = {
+        ...previous,
+        title: wrap.querySelector(`[data-hero-title="${index}"]`).value.trim(),
+        subtitle: wrap.querySelector(`[data-hero-subtitle="${index}"]`).value.trim(),
+        image: wrap.querySelector(`[data-hero-image="${index}"]`).value.trim(),
+        ctaText: wrap.querySelector(`[data-hero-cta-text="${index}"]`).value.trim(),
+        ctaUrl: wrap.querySelector(`[data-hero-cta-url="${index}"]`).value.trim()
+      };
+      saveAndRefresh('Home page slide saved');
+    };
+  });
+  wrap.querySelectorAll('[data-delete-hero]').forEach(button => {
+    button.onclick = () => {
+      if (adminData.heroSlides.length <= 1) {
+        toast('Keep at least one home-page slide');
+        return;
+      }
+      adminData.heroSlides.splice(Number(button.dataset.deleteHero), 1);
+      saveAndRefresh('Home page slide deleted');
+    };
+  });
+
+  const imageInput = $('#new-hero-image-file');
+  imageInput.onchange = () => readHeroImage(imageInput.files[0], (image) => {
+    $('#new-hero-image').value = image;
+    $('#new-hero-image-preview').innerHTML = `<img src="${image}" alt="New slide preview">`;
+  });
+  $('#new-hero-image').oninput = () => {
+    const image = $('#new-hero-image').value.trim();
+    $('#new-hero-image-preview').innerHTML = image ? `<img src="${adminEscape(image)}" alt="New slide preview">` : '';
+  };
+  $('#hero-slide-form').onsubmit = (event) => {
+    event.preventDefault();
+    adminData.heroSlides.push({
+      title: $('#new-hero-title').value.trim(),
+      subtitle: $('#new-hero-subtitle').value.trim(),
+      image: $('#new-hero-image').value.trim(),
+      ctaText: $('#new-hero-cta-text').value.trim() || 'Learn More',
+      ctaUrl: $('#new-hero-cta-url').value.trim() || 'contact.html'
+    });
+    $('#hero-slide-form').reset();
+    $('#new-hero-image-preview').innerHTML = '';
+    saveAndRefresh('Home page slide added');
+  };
+}
+
 function renderSocialSettings() {
   $('#site-name').value = adminData.siteName || '';
   $('#site-tagline').value = adminData.tagline || '';
@@ -477,6 +590,7 @@ function setupPublishTools() {
 function renderAdmin() {
   adminData = getSiteData();
   renderLiveSettings();
+  renderHeroSlidesAdmin();
   renderSocialSettings();
   renderEventsAdmin();
   renderSermonAdmin();

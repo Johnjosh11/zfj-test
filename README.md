@@ -27,6 +27,7 @@ admin.html
 From there you can:
 
 - Turn the live red button on/off
+- Add, edit and remove the automatically rotating home-page hero slides, including their images, headings and buttons
 - Add/delete events
 - Highlight one event on the home page
 - View/filter/sort prayer requests
