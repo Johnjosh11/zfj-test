@@ -21,7 +21,16 @@ function toast(message) {
 }
 
 function saveAndRefresh(message = 'Saved') {
-  const save = saveSiteData(adminData);
+  let save;
+  try {
+    save = saveSiteData(adminData);
+  } catch (error) {
+    console.error('Unable to save site data', error);
+    toast(error.name === 'QuotaExceededError'
+      ? 'Could not save: browser storage is full. Use smaller images.'
+      : 'Could not save changes. Check browser storage and try again.');
+    return;
+  }
   renderAdmin();
   Promise.resolve(save)
     .then(() => toast(message))
@@ -77,6 +86,7 @@ function renderHeroSlidesAdmin() {
   const wrap = $('#hero-slides-admin');
   if (!wrap) return;
 
+  $('#hero-slide-count').textContent = `(${adminData.heroSlides.length})`;
   wrap.innerHTML = adminData.heroSlides.map((slide, index) => `
     <form class="ministry-edit" data-hero-form="${index}">
       <h3>Slide ${index + 1}</h3>

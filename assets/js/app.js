@@ -632,3 +632,7 @@ renderAll();
 loadPublishedData()
   .then((published) => { if (published) renderAll(); })
   .catch((error) => console.error('Unable to load live site content', error));
+
+window.addEventListener('storage', (event) => {
+  if (event.key === ZFJ_STORAGE_KEY) renderAll();
+});

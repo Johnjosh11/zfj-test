@@ -176,7 +176,11 @@ function getSiteData() {
   try {
     const saved = JSON.parse(localStorage.getItem(ZFJ_STORAGE_KEY) || '{}');
     const base = ZFJ_PUBLISHED_DATA ? deepMerge(ZFJ_DEFAULTS, ZFJ_PUBLISHED_DATA) : ZFJ_DEFAULTS;
-    return deepMerge(base, saved);
+    const siteData = deepMerge(base, saved);
+    if (!Array.isArray(siteData.heroSlides) || siteData.heroSlides.length === 0) {
+      siteData.heroSlides = ZFJ_DEFAULTS.heroSlides.map((slide) => ({ ...slide }));
+    }
+    return siteData;
   } catch (error) {
     console.warn('Unable to read saved site data', error);
     return ZFJ_DEFAULTS;
