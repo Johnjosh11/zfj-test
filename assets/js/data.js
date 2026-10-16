@@ -110,6 +110,13 @@ const ZFJ_DEFAULTS = {
       image: 'https://picsum.photos/seed/zfjoutreach/640/440',
       intro: 'Serving our local community and sharing the hope of Jesus through practical care and prayer.',
       page: 'ministry-outreach.html'
+    },
+    {
+      id: 'prayer-night',
+      title: 'Prayer Night',
+      image: 'assets/images/Prayer_Night.jpeg',
+      intro: 'Come together for a welcoming evening of worship, prayer and encouragement as we seek God together.',
+      page: 'ministry-prayer-night.html'
     }
   ],
   latestSermon: {
@@ -179,6 +186,11 @@ function getSiteData() {
     const siteData = deepMerge(base, saved);
     if (!Array.isArray(siteData.heroSlides) || siteData.heroSlides.length === 0) {
       siteData.heroSlides = ZFJ_DEFAULTS.heroSlides.map((slide) => ({ ...slide }));
+    }
+    const prayerNight = ZFJ_DEFAULTS.ministries.find((ministry) => ministry.id === 'prayer-night');
+    if (prayerNight && Array.isArray(siteData.ministries)
+      && !siteData.ministries.some((ministry) => ministry.id === prayerNight.id)) {
+      siteData.ministries.push({ ...prayerNight });
     }
     return siteData;
   } catch (error) {

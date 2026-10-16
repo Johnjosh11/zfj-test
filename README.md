@@ -12,7 +12,7 @@ A mobile-friendly static church website built with HTML, CSS and JavaScript.
 - `events.html` - Events page with month filter
 - `bible-resources.html` - Bible resource links that open in a separate tab
 - `ministries.html` - Ministries overview
-- `ministry-children.html`, `ministry-youth.html`, `ministry-fellowship.html`, `ministry-outreach.html` - Dedicated ministry pages
+- `ministry-children.html`, `ministry-youth.html`, `ministry-fellowship.html`, `ministry-outreach.html`, `ministry-prayer-night.html` - Dedicated ministry pages
 - `prayer.html` - Prayer request form
 - `admin.html` - Hidden admin page. This is not linked in the public menu.
 
@@ -36,6 +36,7 @@ From there you can:
 - Update latest sermon YouTube link
 - Update Bible resource links
 - Update social media links
+- Update ministry titles, introductions and images, including Prayer Night
 - Add, upload and delete gallery photos from the hidden admin page
 
 ## Important note about prayer requests

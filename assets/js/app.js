@@ -615,7 +615,7 @@ function renderAll() {
   renderMonthEvents();
   renderPrayerCta();
   renderMission();
-  renderMinistries(currentPage === 'index.html' ? 4 : null);
+  renderMinistries(currentPage === 'index.html' ? 5 : null);
   renderLatestSermon();
   renderBibleResources(currentPage === 'index.html' ? 4 : null);
   renderHomeGallery();
