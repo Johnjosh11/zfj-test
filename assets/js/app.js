@@ -383,7 +383,7 @@ function renderMinistries(limit) {
         <p class="eyebrow center">Ministries</p>
         <h2 class="section-title center">A place for everyone</h2>
         <p class="section-copy center">Find a ministry where you can belong, grow and serve.</p>
-        <div class="grid four-col">
+        <div class="ministries-scroll" aria-label="Ministries">
           ${items.map(item => `
             <article class="card">
               <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}">
