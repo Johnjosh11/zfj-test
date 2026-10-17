@@ -119,6 +119,27 @@
                 <button class="btn" type="submit">Save latest sermon</button>
               </form>
             </div>
+            <div class="form-card" style="margin-top:22px">
+              <h2 id="sermon-history-form-title">Add previous sermon</h2>
+              <p class="help">Manage the sermons shown below the latest video on the Sermons page.</p>
+              <form id="sermon-history-form" class="grid two-col">
+                <div class="field"><label for="history-sermon-title">Sermon title</label><input id="history-sermon-title" required></div>
+                <div class="field"><label for="history-sermon-speaker">Speaker</label><input id="history-sermon-speaker"></div>
+                <div class="field"><label for="history-sermon-date">Date</label><input id="history-sermon-date" type="date" required></div>
+                <div class="field"><label for="history-sermon-url">YouTube link</label><input id="history-sermon-url" type="url" placeholder="https://www.youtube.com/watch?v=..." required></div>
+                <div class="field" style="grid-column:1/-1"><label for="history-sermon-description">Description</label><textarea id="history-sermon-description"></textarea></div>
+                <div>
+                  <button class="btn" id="history-sermon-submit" type="submit">Add sermon</button>
+                  <button class="btn secondary" id="history-sermon-cancel" type="button" style="display:none">Cancel edit</button>
+                </div>
+              </form>
+            </div>
+            <div class="table-wrap" style="margin-top:22px">
+              <table class="table" id="sermons-table">
+                <thead><tr><th>Sermon</th><th>Date</th><th>YouTube link</th><th>Action</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </section>
 
           <section id="tab-mission" class="admin-section">

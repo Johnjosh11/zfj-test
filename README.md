@@ -34,6 +34,7 @@ From there you can:
 - Mark prayer requests as answered
 - Export prayer requests as CSV, which can be opened in Excel
 - Update latest sermon YouTube link
+- Add, edit and delete previous sermons and their YouTube links
 - Show or hide the Bible resources section and its navigation link
 - Update Bible resource links
 - Update social media links

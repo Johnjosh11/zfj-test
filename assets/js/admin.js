@@ -1,5 +1,6 @@
 let adminData = getSiteData();
 let editingEventId = null;
+let editingSermonIndex = null;
 
 function $(selector) { return document.querySelector(selector); }
 function $all(selector) { return [...document.querySelectorAll(selector)]; }
@@ -360,10 +361,77 @@ function renderSermonAdmin() {
       description: $('#sermon-description').value.trim()
     };
     adminData.latestSermon = latest;
-    const exists = adminData.sermons.some(s => s.title === latest.title && s.date === latest.date);
-    if (!exists) adminData.sermons.unshift(latest);
+    const existingIndex = adminData.sermons.findIndex(s => s.title === latest.title && s.date === latest.date);
+    if (existingIndex >= 0) adminData.sermons[existingIndex] = latest;
+    else adminData.sermons.unshift(latest);
     saveAndRefresh('Latest sermon saved');
   };
+
+  const tbody = $('#sermons-table tbody');
+  const sermons = adminData.sermons
+    .map((sermon, index) => ({ ...sermon, index }))
+    .sort((a, b) => b.date.localeCompare(a.date));
+  tbody.innerHTML = sermons.map(sermon => `
+    <tr>
+      <td><strong>${adminEscape(sermon.title)}</strong><br><span class="help">${adminEscape(sermon.speaker)}</span></td>
+      <td>${adminEscape(sermon.date)}</td>
+      <td><a href="${adminEscape(sermon.youtubeUrl)}" target="_blank" rel="noopener">${adminEscape(sermon.youtubeUrl)}</a></td>
+      <td><button class="btn soft small" type="button" data-edit-sermon="${sermon.index}">Edit</button>
+        <button class="btn danger small" type="button" data-delete-sermon="${sermon.index}">Delete</button></td>
+    </tr>`).join('') || '<tr><td colspan="4">No previous sermons yet.</td></tr>';
+
+  $all('[data-edit-sermon]').forEach(button => {
+    button.onclick = () => {
+      const index = Number(button.dataset.editSermon);
+      const sermon = adminData.sermons[index];
+      if (!sermon) return;
+      editingSermonIndex = index;
+      $('#history-sermon-title').value = sermon.title || '';
+      $('#history-sermon-speaker').value = sermon.speaker || '';
+      $('#history-sermon-date').value = sermon.date || '';
+      $('#history-sermon-url').value = sermon.youtubeUrl || '';
+      $('#history-sermon-description').value = sermon.description || '';
+      $('#sermon-history-form-title').textContent = 'Edit sermon';
+      $('#history-sermon-submit').textContent = 'Save sermon';
+      $('#history-sermon-cancel').style.display = '';
+      $('#sermon-history-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+  });
+  $all('[data-delete-sermon]').forEach(button => {
+    button.onclick = () => {
+      const index = Number(button.dataset.deleteSermon);
+      adminData.sermons.splice(index, 1);
+      if (editingSermonIndex === index) resetSermonHistoryForm();
+      saveAndRefresh('Sermon deleted');
+    };
+  });
+
+  $('#history-sermon-cancel').onclick = resetSermonHistoryForm;
+  $('#sermon-history-form').onsubmit = (event) => {
+    event.preventDefault();
+    const sermon = {
+      title: $('#history-sermon-title').value.trim(),
+      speaker: $('#history-sermon-speaker').value.trim(),
+      date: $('#history-sermon-date').value,
+      youtubeUrl: $('#history-sermon-url').value.trim(),
+      description: $('#history-sermon-description').value.trim()
+    };
+    if (!sermon.title || !sermon.date || !sermon.youtubeUrl) return;
+
+    const addingSermon = editingSermonIndex === null;
+    if (addingSermon) adminData.sermons.push(sermon);
+    else adminData.sermons[editingSermonIndex] = sermon;
+    resetSermonHistoryForm();
+    saveAndRefresh(addingSermon ? 'Sermon added' : 'Sermon updated');
+  };
+}
+
+function resetSermonHistoryForm() {
+  editingSermonIndex = null;
+  $('#sermon-history-form').reset();
+  $('#sermon-history-form-title').textContent = 'Add previous sermon';
+  $('#history-sermon-submit').textContent = 'Add sermon';
+  $('#history-sermon-cancel').style.display = 'none';
 }
 
 function renderMissionAdmin() {
