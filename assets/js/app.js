@@ -57,7 +57,7 @@ function renderCommon() {
       ['events.html', 'Events'],
       ['ministries.html', 'Ministries'],
       ['sermons.html', 'Sermons'],
-      ['bible-resources.html', 'Bible resources'],
+      ...(data.showBibleResources ? [['bible-resources.html', 'Bible resources']] : []),
       ['gallery.html', 'Gallery'],
       ['contact.html', 'Contact']
     ];
@@ -105,7 +105,6 @@ function renderCommon() {
             <div>
               <div class="brand" style="color:white"><span class="brand-logo"><img src="assets/images/zfj-logo.png" alt="ZFJ — Zealous for Jesus"></span></div>
               <p>${escapeHtml(data.tagline)}</p>
-              <p><strong>Service:</strong> Sunday 10:30 AM</p>
             </div>
             <div>
               <h3>Quick Links</h3>
@@ -115,9 +114,7 @@ function renderCommon() {
             </div>
             <div>
               <h3>Contact</h3>
-              <p>Email: hello@zelousforjesus.org</p>
-              <p>Phone: +44 0000 000000</p>
-              <p>Address: Your church address here</p>
+              <p>Email: <a href="mailto:zealousforjesus702@gmail.com">zealousforjesus702@gmail.com</a></p>
             </div>
           </div>
           <div class="footer-bottom">© <span id="year"></span> ${escapeHtml(data.siteName)}. Built with HTML, CSS and JavaScript.</div>
@@ -422,6 +419,16 @@ function renderLatestSermon() {
 function renderBibleResources(limit) {
   const el = document.getElementById('bible-resources-section');
   if (!el) return;
+  if (!data.showBibleResources) {
+    el.replaceChildren();
+    if (currentPage === 'bible-resources.html') {
+      const main = el.closest('main');
+      if (main) main.hidden = true;
+    }
+    return;
+  }
+  const main = el.closest('main');
+  if (main) main.hidden = false;
   const items = limit ? data.bibleResources.slice(0, limit) : data.bibleResources;
   el.innerHTML = `
     <section class="section section-soft">

@@ -21,6 +21,7 @@ const ZFJ_DEFAULTS = {
     label: 'Live Service Now',
     url: 'https://youtube.com/'
   },
+  showBibleResources: false,
   heroSlides: [
     {
       title: 'Zelous for Jesus',

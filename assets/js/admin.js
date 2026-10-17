@@ -453,6 +453,13 @@ function renderMinistriesAdmin() {
 }
 
 function renderBibleAdmin() {
+  const visibilityToggle = $('#bible-resources-toggle');
+  visibilityToggle.checked = !!adminData.showBibleResources;
+  visibilityToggle.onchange = () => {
+    adminData.showBibleResources = visibilityToggle.checked;
+    saveAndRefresh(visibilityToggle.checked ? 'Bible resources are now visible' : 'Bible resources are now hidden');
+  };
+
   const tbody = $('#resources-table tbody');
   tbody.innerHTML = adminData.bibleResources.map((item, index) => `
     <tr>
