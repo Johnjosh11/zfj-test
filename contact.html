@@ -5,9 +5,34 @@
 <body>
   <div id="site-header"></div><div id="floating-social"></div><div id="live-banner"></div>
   <main>
-    <section class="page-hero"><div class="container"><h1>Contact</h1><p>We would love to hear from you. Use these sample contact details and replace them with your church information.</p></div></section>
+    <section class="page-hero"><div class="container"><h1>Contact</h1><p>We would love to hear from you.</p></div></section>
     <section class="section"><div class="container grid two-col">
-      <div class="form-card"><h2>Get in touch</h2><p><strong>Email:</strong> zealousforjesus702@gmail.com</p><p><strong>Service time:</strong> Every Third Saturday Evening 5:30pm</p></div>
+      <div>
+        <div class="form-card contact-details">
+          <h2>Get in touch</h2>
+          <p><strong>Email:</strong> <a href="mailto:zealousforjesus702@gmail.com">zealousforjesus702@gmail.com</a></p>
+          <p>Brother Nelson</p>
+        </div>
+        <section class="form-card meeting-notices" aria-labelledby="meeting-notices-title">
+          <p class="eyebrow">Join us</p>
+          <h2 id="meeting-notices-title">Meeting notices</h2>
+          <ul>
+            <li>
+              <h3>Thursday online prayer meeting</h3>
+              <p>Every Thursday at 18:00 BST on Zoom.</p>
+              <p><strong>Meeting ID:</strong> 326 799 4374<br><strong>Password:</strong> jesus</p>
+            </li>
+            <li>
+              <h3>Prayer Night</h3>
+              <p>Every second Friday of the month at 21:00 BST.</p>
+            </li>
+            <li>
+              <h3>In-person prayer meeting</h3>
+              <p>Every third Saturday of the month.</p>
+            </li>
+          </ul>
+        </section>
+      </div>
       <form class="form-card" onsubmit="event.preventDefault(); alert('This sample form is ready to connect to your email or backend.');">
         <div class="field"><label for="name">Name</label><input id="name" required></div>
         <div class="field"><label for="email">Email</label><input id="email" type="email" required></div>

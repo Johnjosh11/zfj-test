@@ -115,6 +115,7 @@ function renderCommon() {
             <div>
               <h3>Contact</h3>
               <p>Email: <a href="mailto:zealousforjesus702@gmail.com">zealousforjesus702@gmail.com</a></p>
+              <p>Brother Nelson</p>
             </div>
           </div>
           <div class="footer-bottom">© <span id="year"></span> ${escapeHtml(data.siteName)}. Built with HTML, CSS and JavaScript.</div>
